@@ -1,0 +1,4 @@
+ALTER TABLE products
+CHANGE COLUMN nome name VARCHAR(255) NOT NULL,
+CHANGE COLUMN preco price DECIMAL(10, 2) NOT NULL,
+CHANGE COLUMN descricao description TEXT;
