@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import static loja.api.enums.Exceptionmessage.*;
 
@@ -52,6 +52,32 @@ public class ProductService {
         }catch (Exception e){
             throw new BusinessException("Categoria não existe.");
         }
+    }
 
+    @Transactional
+    public void updateProduct (Long id, ProductDto productDto){
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new BusinessException(ID_NON_EXISTENT.getMessage() + id));
+        product.setName(productDto.name());
+        product.setPrice(productDto.price());
+        product.setDescription(productDto.description());
+        product.setCategory(productDto.category());
+        product.setActive(productDto.active());
+    }
+
+    @Transactional
+    public void updatePartialProduct(Long id, Map<String,Object> fields){
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new BusinessException(ID_NON_EXISTENT.getMessage() + id));
+        fields.forEach((key, value) -> {
+            switch (key) {
+                case "name" -> product.setName((String) value);
+                case "price" -> product.setPrice(Double.valueOf(value.toString()));
+                case "description" -> product.setDescription(value.toString());
+                case "category" -> product.setCategory(Category.valueOf(value.toString()));
+                case "active" -> product.setActive(Boolean.valueOf(value.toString()));
+                default -> throw new BusinessException(CAMP_NON_EXISTENT.getMessage() + key);
+            }
+        });
     }
 }
