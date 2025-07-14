@@ -6,11 +6,13 @@ import loja.api.enums.Category;
 import loja.api.exceptions.BusinessException;
 import loja.api.model.Product;
 import loja.api.repository.ProductRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static loja.api.enums.Exceptionmessage.*;
 
@@ -58,6 +60,8 @@ public class ProductService {
     public void updateProduct (Long id, ProductDto productDto){
         Product product = repository.findById(id)
                 .orElseThrow(() -> new BusinessException(ID_NON_EXISTENT.getMessage() + id));
+        StringBuilder status = new StringBuilder("Os campos: ");
+
         product.setName(productDto.name());
         product.setPrice(productDto.price());
         product.setDescription(productDto.description());
@@ -66,18 +70,79 @@ public class ProductService {
     }
 
     @Transactional
-    public void updatePartialProduct(Long id, Map<String,Object> fields){
+    public String updatePartialProduct(Long id, Map<String, Object> fields) {
         Product product = repository.findById(id)
                 .orElseThrow(() -> new BusinessException(ID_NON_EXISTENT.getMessage() + id));
+
+        StringBuilder status = new StringBuilder();
+
         fields.forEach((key, value) -> {
             switch (key) {
-                case "name" -> product.setName((String) value);
-                case "price" -> product.setPrice(Double.valueOf(value.toString()));
-                case "description" -> product.setDescription(value.toString());
-                case "category" -> product.setCategory(Category.valueOf(value.toString()));
-                case "active" -> product.setActive(Boolean.valueOf(value.toString()));
+                case "name" -> {
+                    if (!Objects.equals(product.getName(), value)) {
+                        product.setName((String) value);
+                    } else {
+                        status.append(" \"name\" ");
+                    }
+                }
+                case "price" -> {
+                    Double newPrice = Double.valueOf(value.toString());
+                    if (!Objects.equals(product.getPrice(), newPrice)) {
+                        product.setPrice(newPrice);
+                    } else {
+                        status.append(" \"price\" ");
+                    }
+                }
+                case "description" -> {
+                    if (!Objects.equals(product.getDescription(), value.toString())) {
+                        product.setDescription(value.toString());
+                    } else {
+                        status.append(" \"description\" ");
+                    }
+                }
+                case "category" -> {
+                    Category newCategory = Category.valueOf(value.toString());
+                    if (!Objects.equals(product.getCategory(), newCategory)) {
+                        product.setCategory(newCategory);
+                    } else {
+                        status.append(" \"category\" ");
+                    }
+                }
+                case "active" -> {
+                    Boolean newActive = Boolean.valueOf(value.toString());
+                    if (!Objects.equals(product.getActive(), newActive)) {
+                        product.setActive(newActive);
+                    } else {
+                        status.append(" \"active\" ");
+                    }
+                }
                 default -> throw new BusinessException(CAMP_NON_EXISTENT.getMessage() + key);
             }
         });
+
+        if (!status.equals("Os campos: ")) {
+            status.append("estão semelhante ao cadastrado");
+        }
+        else{
+            status.setLength(0);
+            status.append("Produto atualizado.");
+        }
+
+        return status.toString();
+    }
+
+    @Transactional
+    public String deleteLogicProduct(Long id){
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new BusinessException(ID_NON_EXISTENT.getMessage() + id));
+        product.setActive(false);
+        return product.getName() + " logicamente deletado";
+    }
+
+    public String deleteById(Long id){
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new BusinessException(ID_NON_EXISTENT.getMessage() + id));
+        repository.deleteById(id);
+        return product.getName() + " deletado";
     }
 }

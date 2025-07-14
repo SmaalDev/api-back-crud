@@ -1,6 +1,5 @@
 package loja.api.ControllerApi;
 
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,9 +23,9 @@ public class ControllerProduct {
     ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> cadastrarProduct(@RequestBody ProductDto productDto){
+    public ResponseEntity<Product> cadastrarProduct(@RequestBody ProductDto productDto) {
         Product newProduct = productService.salvedProduct(productDto);
-        if(newProduct != null){
+        if (newProduct != null) {
             URI location = URI.create("/produtos/" + newProduct.getId());
             return ResponseEntity.created(location).body(newProduct);
         }
@@ -34,41 +33,53 @@ public class ControllerProduct {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll(){
+    public ResponseEntity<List<Product>> findAll() {
         List<Product> productList = productService.findAll();
         return ResponseEntity.ok().body(productList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductId(@PathVariable @NotBlank Long id){
-        return ResponseEntity.ok().body( productService.findById(id));
+    public ResponseEntity<Product> findProductId(@PathVariable @NotBlank Long id) {
+        return ResponseEntity.ok().body(productService.findById(id));
     }
 
     @GetMapping("/contain/{name}")
-    public ResponseEntity<List<Product>> findProductId(@PathVariable @NotBlank String name){
+    public ResponseEntity<List<Product>> findProductId(@PathVariable @NotBlank String name) {
         List<Product> productList = productService.findByNameContainingIgnoreCase(name);
         return ResponseEntity.ok().body(productList);
     }
 
     @GetMapping("/find-by-category/{category}")
-    public ResponseEntity<List<Product>> findProductCategory(@PathVariable @NotBlank String category){
+    public ResponseEntity<List<Product>> findProductCategory(@PathVariable @NotBlank String category) {
         List<Product> productList = productService.findByCategory(category.toUpperCase());
         return ResponseEntity.ok().body(productList);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProduct (
+    public ResponseEntity<String> updateProduct(
             @PathVariable @NotNull Long id,
             @RequestBody @Valid ProductDto productDto
-    ){
+    ) {
         productService.updateProduct(id, productDto);
         return ResponseEntity.ok().body(productDto.name() + " atualizado.");
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updatePartialProduct(@PathVariable Long id, @RequestBody Map<String, Object> fields){
-        productService.updatePartialProduct(id, fields);
-        String upadeteFields = String.join(" ", fields.keySet());
-        return ResponseEntity.ok().body("Campos [" + upadeteFields + "] atualizados.");
+    public ResponseEntity<String> updatePartialProduct(@PathVariable Long id,
+                                                       @RequestBody Map<String, Object> fields) {
+        String status = productService.updatePartialProduct(id, fields);
+        return ResponseEntity.ok().body(status);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id){
+        String message = productService.deleteById(id);
+        return ResponseEntity.ok().body(message);
+    }
+
+    @DeleteMapping("/delete-logic/{id}")
+    public ResponseEntity<String> deleteLogicProduct(@PathVariable Long id){
+        String message = productService.deleteLogicProduct(id);
+        return ResponseEntity.ok().body(message);
     }
 }
