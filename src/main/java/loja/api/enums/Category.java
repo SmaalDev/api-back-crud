@@ -4,5 +4,6 @@ public enum Category {
     INFORMATICA,
     ELETRODOMESTICO,
     SMARTPHONES,
-    NOTEBOOKS;
+    NOTEBOOKS,
+    PERIFERICOS;
 }
