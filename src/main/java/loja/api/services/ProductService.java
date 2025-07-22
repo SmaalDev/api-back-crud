@@ -51,7 +51,7 @@ public class ProductService {
         product.setName(productDto.name());
         product.setPrice(productDto.price());
         product.setDescription(productDto.description());
-        product.setActive(productDto.active());
+        product.setStatus(productDto.status());
     }
 
     @Transactional
@@ -85,14 +85,6 @@ public class ProductService {
                         status.append(" \"description\" ");
                     }
                 }
-                case "active" -> {
-                    Boolean newActive = Boolean.valueOf(value.toString());
-                    if (!Objects.equals(product.getActive(), newActive)) {
-                        product.setActive(newActive);
-                    } else {
-                        status.append(" \"active\" ");
-                    }
-                }
                 default -> throw new BusinessException(CAMP_NON_EXISTENT.getMessage() + key);
             }
         });
@@ -112,7 +104,7 @@ public class ProductService {
     public String deleteLogicProduct(Long id){
         Product product = repository.findById(id)
                 .orElseThrow(() -> new BusinessException(ID_NON_EXISTENT.getMessage() + id));
-        product.setActive(false);
+        product.setStatus(false);
         return product.getName() + " logicamente deletado";
     }
 

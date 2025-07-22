@@ -23,7 +23,7 @@ public class ControllerProduct {
     ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> cadastrarProduct(@RequestBody @Valid ProductDto productDto) {
+    public ResponseEntity<Product> registerProduct(@RequestBody @Valid ProductDto productDto) {
         Product newProduct = productService.salvedProduct(productDto);
         if (newProduct != null) {
             URI location = URI.create("/produtos/" + newProduct.getId());
