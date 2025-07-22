@@ -23,7 +23,7 @@ public class ControllerProduct {
     ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> cadastrarProduct(@RequestBody ProductDto productDto) {
+    public ResponseEntity<Product> cadastrarProduct(@RequestBody @Valid ProductDto productDto) {
         Product newProduct = productService.salvedProduct(productDto);
         if (newProduct != null) {
             URI location = URI.create("/produtos/" + newProduct.getId());
@@ -46,12 +46,6 @@ public class ControllerProduct {
     @GetMapping("/contain/{name}")
     public ResponseEntity<List<Product>> findProductId(@PathVariable @NotBlank String name) {
         List<Product> productList = productService.findByNameContainingIgnoreCase(name);
-        return ResponseEntity.ok().body(productList);
-    }
-
-    @GetMapping("/find-by-category/{category}")
-    public ResponseEntity<List<Product>> findProductCategory(@PathVariable @NotBlank String category) {
-        List<Product> productList = productService.findByCategory(category.toUpperCase());
         return ResponseEntity.ok().body(productList);
     }
 
