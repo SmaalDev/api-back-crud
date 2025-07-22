@@ -2,7 +2,10 @@ package loja.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import loja.api.enums.Category;
+
+
+
+import java.util.Map;
 
 public record ProductDto(
         @NotBlank(message = "O campo 'name' não pode estar em branco")
@@ -11,6 +14,8 @@ public record ProductDto(
         Double price,
         String description,
         @NotNull
-        Category category,
-        Boolean active
+        String category,
+        Boolean status,
+        Map<String, String> specificData,
+        String mark
 ) { }

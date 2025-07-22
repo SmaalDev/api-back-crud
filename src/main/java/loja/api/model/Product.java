@@ -1,10 +1,9 @@
 package loja.api.model;
-
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import loja.api.dto.ProductDto;
-import loja.api.enums.Category;
+
 import lombok.*;
+import java.util.Map;
 
 @Table(name = "products")
 @Entity(name = "Product")
@@ -19,20 +18,18 @@ public class Product {
     private String name;
     private Double price;
     private String description;
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    private Integer subCategory;
     @Column(nullable = false)
-    private Boolean active;
+    private Boolean status;
+    private String marca;
+    private Map<String, String> specificData;
+
 
     public Product(ProductDto produtoDto) {
         this.name = produtoDto.name();
         this.price = produtoDto.price();
         this.description = produtoDto.description();
-        this.category = produtoDto.category();
-        this.active = produtoDto.active();
-    }
-
-    public Long getId() {
-        return id;
+        this.status = produtoDto.status();
+        this.specificData = produtoDto.specificData();
     }
 }

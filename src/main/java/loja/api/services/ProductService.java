@@ -2,7 +2,6 @@ package loja.api.services;
 
 import jakarta.transaction.Transactional;
 import loja.api.dto.ProductDto;
-import loja.api.enums.Category;
 import loja.api.exceptions.BusinessException;
 import loja.api.model.Product;
 import loja.api.repository.ProductRepository;
@@ -43,19 +42,6 @@ public class ProductService {
         return repository.findByNameContainingIgnoreCase(name);
     }
 
-    public List<Product> findByCategory(String category) {
-        try {
-            Category categoryValid = Category.valueOf(category.toUpperCase());
-            List<Product> productList = repository.findByCategory(categoryValid);
-            if(productList.isEmpty()){
-                throw new BusinessException(NONE_PROD_CAT.getMessage() + category);
-            }
-            return productList;
-        }catch (Exception e){
-            throw new BusinessException("Categoria não existe.");
-        }
-    }
-
     @Transactional
     public void updateProduct (Long id, ProductDto productDto){
         Product product = repository.findById(id)
@@ -65,7 +51,6 @@ public class ProductService {
         product.setName(productDto.name());
         product.setPrice(productDto.price());
         product.setDescription(productDto.description());
-        product.setCategory(productDto.category());
         product.setActive(productDto.active());
     }
 
@@ -100,14 +85,6 @@ public class ProductService {
                         status.append(" \"description\" ");
                     }
                 }
-                case "category" -> {
-                    Category newCategory = Category.valueOf(value.toString());
-                    if (!Objects.equals(product.getCategory(), newCategory)) {
-                        product.setCategory(newCategory);
-                    } else {
-                        status.append(" \"category\" ");
-                    }
-                }
                 case "active" -> {
                     Boolean newActive = Boolean.valueOf(value.toString());
                     if (!Objects.equals(product.getActive(), newActive)) {
@@ -121,7 +98,7 @@ public class ProductService {
         });
 
         if (!status.equals("Os campos: ")) {
-            status.append("estão semelhante ao cadastrado");
+            status.append("estão semelhante ao cadastrado e por isso não sofreram alteração");
         }
         else{
             status.setLength(0);
