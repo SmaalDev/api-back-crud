@@ -1,13 +1,12 @@
 package loja.api.enums;
 
-public enum Exceptionmessage {
-        ID_NON_EXISTENT("Não existe nenhum produto com id: "),
-        NONE_PROD_CAD("Nenhum produto cadastrado no banco de dados"),
-        NONE_PROD_CAT("Nenhum produto possui essa categoria: "),
-        CAMP_NON_EXISTENT("Campo inválido: ");
+public enum CategoryExceptionMessage {
+
+        EXISTING_CATEGORY("Já existe uma categoria com o nome: "),
+        ID_NON_EXISTENT("Não existe nenhuma categoria com ID: "),
+        NONE_PROD_CAD("Nenhuma categoria cadastrada");
 
         private final String message;
-        Exceptionmessage(String message) {this.message = message;}
+        CategoryExceptionMessage(String message) {this.message = message;}
         public String getMessage() {return this.message;}
-
 }

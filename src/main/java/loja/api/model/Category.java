@@ -2,10 +2,7 @@ package loja.api.model;
 
 import jakarta.persistence.*;
 import loja.api.dto.CategoryDto;
-import loja.api.services.MapToJsonConverter;
 import lombok.*;
-
-import java.util.Map;
 
 @Table(name = "CATEGORY", schema = "business")
 @Entity(name = "Category")
@@ -19,12 +16,12 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
-    @Column(columnDefinition = "TEXT")
-    @Convert(converter = MapToJsonConverter.class)
-    Fields fields;
+    @Column(columnDefinition = "json")
+    private String fields;
+    Boolean active;
 
     public Category(CategoryDto categoryDto){
         this.name = categoryDto.name();
-        this.fields = new Fields(categoryDto.fields());
+        this.fields = categoryDto.fields().toString();
     }
 }

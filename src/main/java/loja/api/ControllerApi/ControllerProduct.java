@@ -38,8 +38,8 @@ public class ControllerProduct {
         return ResponseEntity.ok().body(productList);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductId(@PathVariable @NotBlank Long id) {
+    @GetMapping("/findById")
+    public ResponseEntity<Product> findProductId(@RequestBody @NotBlank Long id) {
         return ResponseEntity.ok().body(productService.findById(id));
     }
 
@@ -55,7 +55,7 @@ public class ControllerProduct {
             @RequestBody @Valid ProductDto productDto
     ) {
         productService.updateProduct(id, productDto);
-        return ResponseEntity.ok().body(productDto.name() + " atualizado.");
+        return ResponseEntity.ok().body(productDto.name() + " atualizado");
     }
 
     @PatchMapping("/{id}")

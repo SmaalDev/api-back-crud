@@ -3,8 +3,6 @@ package loja.api.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-
-
 import java.util.Map;
 
 public record ProductDto(
@@ -16,6 +14,6 @@ public record ProductDto(
         @NotNull
         String category,
         Boolean status,
-        Map<String, String> specificData,
-        String mark
+        String mark,
+        Map<String,String> fields
 ) { }
