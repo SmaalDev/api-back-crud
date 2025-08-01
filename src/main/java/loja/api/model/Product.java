@@ -1,8 +1,12 @@
 package loja.api.model;
+
 import jakarta.persistence.*;
 import loja.api.dto.ProductDto;
 
 import lombok.*;
+
+
+
 import java.util.Map;
 
 @Table(name = "products")
@@ -22,14 +26,14 @@ public class Product {
     @Column(nullable = false)
     private Boolean status;
     private String marca;
-    private Map<String, String> specificData;
+    @Column(columnDefinition = "json")
+    private String fields;
 
-
-    public Product(ProductDto produtoDto) {
+    public Product(ProductDto produtoDto, String fields) {
         this.name = produtoDto.name();
         this.price = produtoDto.price();
         this.description = produtoDto.description();
         this.status = produtoDto.status();
-        this.specificData = produtoDto.specificData();
+        this.fields = fields;
     }
 }
