@@ -6,10 +6,12 @@ import jakarta.transaction.Transactional;
 import loja.api.dto.CategoryDto;
 import loja.api.exceptions.CategoryException;
 import loja.api.model.Category;
+import loja.api.model.Dto.CategoryUpdateDto;
 import loja.api.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,5 +79,31 @@ public class CategoryService {
                 .orElseThrow(() -> new CategoryException(ID_NON_EXISTENT.getMessage() ));
         newCategory.setActive(false);
         return newCategory.getName() + " logicamente excluída";
+    }
+
+    @Transactional
+    public Map<String, Boolean> updateCategory(Long id, CategoryUpdateDto categoryUpdateDto) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryException(ID_NON_EXISTENT.getMessage() + id));
+        Map<String, Boolean> updateFields = new HashMap<>();
+
+        if(categoryUpdateDto.name(). != null) {
+            if (categoryUpdateDto.name().equals(category.getName())){
+                category.setName(categoryUpdateDto.name());
+                updateFields.put("name", true);
+            }else{
+                updateFields.put("name", false);
+            }
+        }
+        if(categoryUpdateDto.fields() != null) {
+            if (categoryUpdateDto.fields().equals(category.getFields())){
+                category.setFields(categoryUpdateDto.fields());
+                updateFields.put("fields", true);
+            }else{
+                updateFields.put("fields", false);
+            }
+        }
+
+        return updateFields;
     }
 }
