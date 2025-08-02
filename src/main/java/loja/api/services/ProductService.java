@@ -1,6 +1,5 @@
 package loja.api.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import loja.api.dto.ProductDto;
 import loja.api.exceptions.BusinessException;
@@ -20,7 +19,7 @@ import static loja.api.enums.Exceptionmessage.*;
 public class ProductService {
     @Autowired
     private ProductRepository repository;
-    private CategoryService categoryService;
+    private SubCategoryService subCategoryService;
 
 
     @Transactional
@@ -28,7 +27,7 @@ public class ProductService {
         List<Product> productList = repository.findByNameIgnoreCase(productDto.name());
 
         if(productList.isEmpty()){
-            return repository.save(new Product(productDto, categoryService.convertMapToString(productDto.fields())));
+            return repository.save(new Product(productDto, subCategoryService.convertMapToString(productDto.fields())));
         }else{
             throw new BusinessException(EXISTING_PRODUCT_NAME.getMessage() + productDto.name());
         }

@@ -3,45 +3,44 @@ package loja.api.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import loja.api.dto.CategoryDto;
+import loja.api.dto.SubCategoryDto;
 import loja.api.exceptions.CategoryException;
-import loja.api.model.Category;
-import loja.api.model.Dto.CategoryUpdateDto;
-import loja.api.repository.CategoryRepository;
+import loja.api.model.SubCategory;
+import loja.api.dto.SubCategoryUpdateDto;
+import loja.api.repository.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static loja.api.enums.CategoryExceptionMessage.EXISTING_CATEGORY;
 import static loja.api.enums.CategoryExceptionMessage.ID_NON_EXISTENT;
 import static loja.api.enums.Exceptionmessage.NONE_PROD_CAD;
 
 @Service
-public class CategoryService {
+public class SubCategoryService {
     @Autowired
-    CategoryRepository categoryRepository;
+    SubCategoryRepository subCategoryRepository;
     ObjectMapper mapper = new ObjectMapper();
 
-    public Category saveCategory(CategoryDto categoryDto){
-        List<Category> categories = findByNameIgnoreCase(categoryDto.name());
+    public SubCategory saveCategory(SubCategoryDto subCategoryDto){
+        List<SubCategory> categories = findByNameIgnoreCase(subCategoryDto.name());
         if(categories.isEmpty()){
-            return categoryRepository.save(new Category(categoryDto));
+            return subCategoryRepository.save(new SubCategory(subCategoryDto));
         }else{
-            throw new CategoryException(EXISTING_CATEGORY.getMessage() + categoryDto.name());
+            throw new CategoryException(EXISTING_CATEGORY.getMessage() + subCategoryDto.name());
         }
     }
 
-    public Category findById(Long id){
-        return categoryRepository.findById(id)
+    public SubCategory findById(Long id){
+        return subCategoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryException(ID_NON_EXISTENT.getMessage() + id));
     }
 
-    public List<Category> findAll(){
-        List<Category> categories = categoryRepository.findAll();
+    public List<SubCategory> findAll(){
+        List<SubCategory> categories = subCategoryRepository.findAll();
 
         if (categories.isEmpty()){
             throw new CategoryException(NONE_PROD_CAD.getMessage());
@@ -49,12 +48,12 @@ public class CategoryService {
         return categories;
     }
 
-    public List<Category> findByNameIgnoreCase(String name){
-        return categoryRepository.findByNameIgnoreCase(name);
+    public List<SubCategory> findByNameIgnoreCase(String name){
+        return subCategoryRepository.findByNameIgnoreCase(name);
     }
 
-    public List<Category> findByNameContaining(String name){
-        return categoryRepository.findByNameContainingIgnoreCase(name);
+    public List<SubCategory> findByNameContaining(String name){
+        return subCategoryRepository.findByNameContainingIgnoreCase(name);
     }
 
     public String convertMapToString(Map<String,String> fields){
@@ -75,32 +74,32 @@ public class CategoryService {
 
     @Transactional
     public String deleteLogicCategory(Long id) {
-        Category newCategory = categoryRepository.findById(id)
+        SubCategory newSubCategory = subCategoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryException(ID_NON_EXISTENT.getMessage() ));
-        newCategory.setActive(false);
-        return newCategory.getName() + " logicamente excluída";
+        newSubCategory.setActive(false);
+        return newSubCategory.getName() + " logicamente excluída";
     }
 
     @Transactional
-    public Map<String, Boolean> updateCategory(Long id, CategoryUpdateDto categoryUpdateDto) {
-        Category category = categoryRepository.findById(id)
+    public Map<String, Boolean> updateCategory(Long id, SubCategoryUpdateDto subCategoryUpdateDto) {
+        SubCategory subCategory = subCategoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryException(ID_NON_EXISTENT.getMessage() + id));
         Map<String, Boolean> updateFields = new HashMap<>();
 
-        if(categoryUpdateDto.name(). != null) {
-            if (categoryUpdateDto.name().equals(category.getName())){
-                category.setName(categoryUpdateDto.name());
+        if(subCategoryUpdateDto.name() != null) {
+            if (subCategoryUpdateDto.name().equals(subCategory.getName())){
+                subCategory.setName(subCategoryUpdateDto.name());
                 updateFields.put("name", true);
             }else{
                 updateFields.put("name", false);
             }
         }
-        if(categoryUpdateDto.fields() != null) {
-            if (categoryUpdateDto.fields().equals(category.getFields())){
-                category.setFields(categoryUpdateDto.fields());
-                updateFields.put("fields", true);
+        if(subCategoryUpdateDto.idCategory() != null) {
+            if (subCategoryUpdateDto.idCategory().equals(subCategory.getIdCategory())){
+                subCategory.setIdCategory(subCategoryUpdateDto.idCategory());
+                updateFields.put("idCategory", true);
             }else{
-                updateFields.put("fields", false);
+                updateFields.put("idCategory", false);
             }
         }
 
